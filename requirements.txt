@@ -1,0 +1,12 @@
+Queue
+threading
+time
+logging
+socket
+optparser
+paramiko
+ftplib
+MySQLdb
+subprocess
+getpass
+pexpect
