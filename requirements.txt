@@ -10,3 +10,4 @@ MySQLdb
 subprocess
 getpass
 pexpect
+paramiko

